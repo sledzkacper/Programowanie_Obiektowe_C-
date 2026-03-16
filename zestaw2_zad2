@@ -1,0 +1,69 @@
+// statyczny polimorfizm
+
+#include <iostream>
+
+void pokaz(int x)
+{
+    std::cout << "int: " << x << "\n";
+}
+
+void pokaz(double x)
+{
+    std::cout << "double: " << x << "\n";
+}
+
+int main()
+{
+    pokaz(5);
+    pokaz(3.14);
+    return 0;
+}
+
+// decyzja przy kompilacji
+
+================================================
+
+// dynamiczny polimorfizm
+
+
+#include <iostream>
+
+class Zwierze
+{
+public:
+    virtual void dzwiek() = 0;
+};
+
+class Pies : public Zwierze
+{
+public:
+    void dzwiek() override
+    {
+        std::cout << "Hau hau\n";
+    }
+};
+
+class Kot : public Zwierze
+{
+public:
+    void dzwiek() override
+    {
+        std::cout << "Miau\n";
+    }
+};
+
+int main()
+{
+    Zwierze* z1 = new Pies();
+    Zwierze* z2 = new Kot();
+
+    z1->dzwiek();
+    z2->dzwiek();
+
+    delete z1;
+    delete z2;
+
+    return 0;
+}
+
+// program w trakcie działania sprawdza, czy to pies czy kot, następnie włącza właściwą wersję
