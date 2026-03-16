@@ -1,0 +1,34 @@
+// Zad.1
+
+// Polimorfizm statyczny to mechanizm, w którym wybór odpowiedniej funkcji lub metody następuje na etapie kompilacji programu. Przykładami są przeciążanie funkcji oraz szablony funkcji i klas.
+
+// Polimorfizm dynamiczny to mechanizm, w którym wybór odpowiedniej funkcji następuje w czasie działania programu. Jest realizowany przez dziedziczenie oraz funkcje wirtualne.
+
+// Klasa abstrakcyjna to klasa, której nie można bezpośrednio instancjonować. Służy jako klasa bazowa dla innych klas i zawiera co najmniej jedną funkcję czysto wirtualną.
+
+// Funkcja wirtualna to metoda klasy bazowej zadeklarowana słowem kluczowym virtual, która może być przesłonięta w klasie pochodnej. Umożliwia to wywołanie odpowiedniej wersji funkcji zależnie od rzeczywistego typu obiektu, czyli realizację polimorfizmu dynamicznego.
+
+// skrocik
+// Polimorfizm statyczny działa w czasie kompilacji, np. przez szablony.
+
+// Polimorfizm dynamiczny działa w czasie działania programu, np. przez funkcje wirtualne.
+
+// Klasa abstrakcyjna to klasa bazowa, z której nie tworzy się obiektów.
+
+// Funkcja wirtualna pozwala klasom pochodnym zmieniać zachowanie metody bazowej
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
