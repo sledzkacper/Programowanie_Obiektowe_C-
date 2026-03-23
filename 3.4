@@ -1,0 +1,158 @@
+#include <cstddef>
+#include <iostream>
+#include <stdexcept>
+#include <vector>
+
+template <typename T, std::size_t N, typename Container = std::vector<T>>
+class Stack
+{
+private:
+    T data[N];
+    std::size_t count;
+
+public:
+    Stack() : count(0)
+    {
+    }
+
+    void push(const T& value)
+    {
+        if (count >= N)
+        {
+            throw std::out_of_range("Stack overflow");
+        }
+
+        data[count] = value;
+        ++count;
+    }
+
+    void pop()
+    {
+        if (empty())
+        {
+            throw std::out_of_range("Stack underflow");
+        }
+
+        --count;
+    }
+
+    T& top()
+    {
+        if (empty())
+        {
+            throw std::out_of_range("Stack is empty");
+        }
+
+        return data[count - 1];
+    }
+
+    const T& top() const
+    {
+        if (empty())
+        {
+            throw std::out_of_range("Stack is empty");
+        }
+
+        return data[count - 1];
+    }
+
+    bool empty() const
+    {
+        return count == 0;
+    }
+
+    std::size_t size() const
+    {
+        return count;
+    }
+
+    constexpr std::size_t capacity() const
+    {
+        return N;
+    }
+};
+
+template <typename T, typename Container>
+class Stack<T, 0, Container>
+{
+private:
+    Container data;
+
+public:
+    Stack() = default;
+
+    void push(const T& value)
+    {
+        data.push_back(value);
+    }
+
+    void pop()
+    {
+        if (empty())
+        {
+            throw std::out_of_range("Stack underflow");
+        }
+
+        data.pop_back();
+    }
+
+    T& top()
+    {
+        if (empty())
+        {
+            throw std::out_of_range("Stack is empty");
+        }
+
+        return data.back();
+    }
+
+    const T& top() const
+    {
+        if (empty())
+        {
+            throw std::out_of_range("Stack is empty");
+        }
+
+        return data.back();
+    }
+
+    bool empty() const
+    {
+        return data.empty();
+    }
+
+    std::size_t size() const
+    {
+        return data.size();
+    }
+};
+
+int main()
+{
+    Stack<int, 100> s_default;
+
+    s_default.push(10);
+    s_default.push(20);
+    s_default.push(30);
+
+    std::cout << "s_default.top() = " << s_default.top() << "\n";
+    std::cout << "s_default.size() = " << s_default.size() << "\n";
+    std::cout << "s_default.capacity() = " << s_default.capacity() << "\n";
+
+    s_default.pop();
+    std::cout << "po pop, s_default.top() = " << s_default.top() << "\n";
+
+    Stack<int, 0, std::vector<int>> s_container;
+
+    s_container.push(5);
+    s_container.push(15);
+    s_container.push(25);
+
+    std::cout << "s_container.top() = " << s_container.top() << "\n";
+    std::cout << "s_container.size() = " << s_container.size() << "\n";
+
+    s_container.pop();
+    std::cout << "po pop, s_container.top() = " << s_container.top() << "\n";
+
+    return 0;
+}
