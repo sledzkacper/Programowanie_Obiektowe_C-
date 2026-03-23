@@ -1,0 +1,27 @@
+#include <iostream>
+
+template <typename Result>
+Result convert(int value);
+
+template <>
+int convert<int>(int value)
+{
+    return value;
+}
+
+template <>
+double convert<double>(int value)
+{
+    return value / 2.0;
+}
+
+int main()
+{
+    int as_int = convert<int>(9);
+    double as_double = convert<double>(9);
+
+    std::cout << "convert<int>(9) = " << as_int << "\n";
+    std::cout << "convert<double>(9) = " << as_double << "\n";
+
+    return 0;
+}
