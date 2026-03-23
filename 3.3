@@ -1,0 +1,93 @@
+#include <cstddef>
+#include <iostream>
+
+template <typename T, std::size_t N>
+class Stack
+{
+public:
+    void info() const
+    {
+        std::cout << "Stack<T, N> -> szablon podstawowy\n";
+    }
+};
+
+template <typename T>
+class Stack<T, 666>
+{
+public:
+    void info() const
+    {
+        std::cout << "Stack<T, 666> -> specjalizacja czesciowa\n";
+    }
+};
+
+template <typename T, std::size_t N>
+class Stack<T*, N>
+{
+public:
+    void info() const
+    {
+        std::cout << "Stack<T*, N> -> specjalizacja czesciowa\n";
+    }
+};
+
+template <std::size_t N>
+class Stack<double, N>
+{
+public:
+    void info() const
+    {
+        std::cout << "Stack<double, N> -> specjalizacja czesciowa\n";
+    }
+};
+
+template <std::size_t N>
+class Stack<int*, N>
+{
+public:
+    void info() const
+    {
+        std::cout << "Stack<int*, N> -> specjalizacja czesciowa\n";
+    }
+};
+
+template <>
+class Stack<double, 666>
+{
+public:
+    void info() const
+    {
+        std::cout << "Stack<double, 666> -> specjalizacja pelna\n";
+    }
+};
+
+template <>
+class Stack<double*, 44>
+{
+public:
+    void info() const
+    {
+        std::cout << "Stack<double*, 44> -> specjalizacja pelna\n";
+    }
+};
+
+int main()
+{
+    Stack<char, 10> s1;
+    Stack<int, 666> s2;
+    Stack<float*, 5> s3;
+    Stack<double, 8> s4;
+    Stack<int*, 9> s5;
+    Stack<double, 666> s6;
+    Stack<double*, 44> s7;
+
+    s1.info();
+    s2.info();
+    s3.info();
+    s4.info();
+    s5.info();
+    s6.info();
+    s7.info();
+
+    return 0;
+}
