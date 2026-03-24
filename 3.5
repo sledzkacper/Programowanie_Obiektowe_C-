@@ -4,26 +4,25 @@
 
 int main()
 {
-    std::set<int, std::greater<int>> numbers;
+    std::set<int, std::greater<int>> numbers;   // Zbiór, kolejność malejąca
 
     numbers.insert(7);
     numbers.insert(2);
     numbers.insert(10);
     numbers.insert(4);
-    numbers.insert(10);
     numbers.insert(1);
     numbers.insert(8);
 
     std::cout << "Zbior posortowany malejaco:\n";
     for (int value : numbers)
     {
-        std::cout << value << " ";
+        std::cout << value << " ";  // Wypisuje każdy element value ze zbioru numbers 
     }
     std::cout << "\n";
 
     std::cout << "Liczba elementow: " << numbers.size() << "\n";
 
-    if (numbers.find(4) != numbers.end())
+    if (numbers.find(4) != numbers.end())   // Jeśli wynik nie jest równy end() => element 4 istnieje w zbiorze
     {
         std::cout << "Element 4 znajduje sie w zbiorze\n";
     }
