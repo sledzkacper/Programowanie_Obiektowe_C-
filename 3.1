@@ -1,7 +1,6 @@
 #include <cstddef>
 #include <cstring>
 #include <iostream>
-
 using namespace std;
 
 template <typename T>
@@ -15,6 +14,7 @@ T* max(T* a, T* b)
 {
     return (*a > *b) ? a : b;
 }
+
 
 template <typename T>
 T* max(T* data, size_t n)   // Wersja dla tablicy 
@@ -75,3 +75,12 @@ int main()  // testy
 
     return 0;
 }
+
+
+// Terminal:
+//max(3, 7) = 7
+//wiekszy przez wskaznik = 25
+//najwiekszy w tablicy = 13
+//wiekszy napis char* = zzz
+//wiekszy napis const char* = banan
+//wersja mieszana = lama
