@@ -6,19 +6,19 @@ Result convert(int value);
 template <>
 int convert<int>(int value)
 {
-    return value;
+    return value;   // Dla Result = int funkcja nic nie zmienia
 }
 
 template <>
 double convert<double>(int value)
 {
-    return value / 2.0;
+    return value / 2.0; // Dla Result = double, funkcja dzieli na 2
 }
 
-int main()
+int main()  // Testy
 {
-    int as_int = convert<int>(9);
-    double as_double = convert<double>(9);
+    int as_int = convert<int>(9);   // Wywołujemy funkcję, ale wymuszamy użycie wersji dla int
+    double as_double = convert<double>(9);  // Tu wymuszamy wersji z double
 
     std::cout << "convert<int>(9) = " << as_int << "\n";
     std::cout << "convert<double>(9) = " << as_double << "\n";
