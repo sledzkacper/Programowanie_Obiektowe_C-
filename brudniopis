@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <vector>
 
-template <typename T, std::size_t N, typename Container = std::vector<T>>
+template <typename T, std::size_t N, typename Container = std::vector<T>>    // Trzeci parametr szablonu gdyby N == 0
 class Stack
 {
 private:
