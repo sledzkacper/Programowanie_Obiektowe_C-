@@ -47,31 +47,31 @@ const char* max(char* a, const char* b)
     return (strcmp(a, b) > 0) ? a : b;
 }
 
-int main()
+int main()  // testy 
 {
     cout << "max(3, 7) = " << ::max(3, 7) << "\n";
 
     int x = 10;
     int y = 25;
-    int* bigger_ptr = max(&x, &y);
+    int* bigger_ptr = ::max(&x, &y);
     cout << "wiekszy przez wskaznik = " << *bigger_ptr << "\n";
 
     int tab[] = {4, 9, 1, 13, 5};
-    int* biggest_in_array = max(tab, 5);
+    int* biggest_in_array = ::max(tab, 5);
     if (biggest_in_array != nullptr)
     {
         cout << "najwiekszy w tablicy = " << *biggest_in_array << "\n";
     }
 
-    char a[] = "krotki";
-    char b[] = "dluuuuuuuuugi";
-    cout << "wiekszy napis char* = " << max(a, b) << "\n";
+    char a[] = "aaa";
+    char b[] = "zzz";
+    cout << "wiekszy napis char* = " << ::max(a, b) << "\n";
 
     const char* c = "banan";
     const char* d = "arbuz";
-    cout << "wiekszy napis const char* = " << max(c, d) << "\n";
+    cout << "wiekszy napis const char* = " << ::max(c, d) << "\n";
 
-    cout << "wersja mieszana = " << max(a, "lama") << "\n";
+    cout << "wersja mieszana = " << ::max(a, "lama") << "\n";
 
     return 0;
 }
