@@ -1,7 +1,7 @@
 #include <cstddef>
 #include <iostream>
 
-template <typename T, std::size_t N>
+template <typename T, std::size_t N>    // Klasa z dwoma zmiennymi do wypełnienia
 class Stack
 {
 public:
@@ -10,6 +10,8 @@ public:
         std::cout << "Stack<T, N> -> szablon podstawowy\n";
     }
 };
+
+// Teraz kilka opcji z doprecyzowaniem klasy do jednej zmiennej
 
 template <typename T>
 class Stack<T, 666>
@@ -50,6 +52,8 @@ public:
         std::cout << "Stack<int*, N> -> specjalizacja czesciowa\n";
     }
 };
+
+//    Przykłady pełnego doprecyzowania do dwoch zmiennych (dalej trzeba pisać pusty template<> bo inaczej błąd w kompilacji
 
 template <>
 class Stack<double, 666>
