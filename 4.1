@@ -1,0 +1,55 @@
+#include <iostream>
+
+// Krok 1: Ogólny szablon klasy cech (zostawiamy pusty)
+template <typename T>
+struct sum_traits;
+
+// Krok 2: Specjalizacje dla poszczególnych typów
+template <>
+struct sum_traits<char> {
+    using value_type = int; 
+};
+
+template <>
+struct sum_traits<int> {
+    using value_type = long long;
+};
+
+template <>
+struct sum_traits<float> {
+    using value_type = double;
+};
+
+template <>
+struct sum_traits<double> {
+    using value_type = double; 
+};
+
+// Krok 3: Funkcja szablonowa sumująca elementy
+template <typename T>
+typename sum_traits<T>::value_type sum(T* begin, T* end) {
+    // Zmienna total o poprawnym, bezpiecznym typie wyciągniętym z traits
+    typename sum_traits<T>::value_type total = 0;
+    
+    // Pętla po zakresie wskaźników
+    while (begin != end) {
+        total += *begin;
+        ++begin;
+    }
+    
+    return total;
+}
+
+// Przykładowe użycie (test):
+int main() {
+    char chars[] = {100, 100, 100}; // Suma to 300, w zwykłym char by się nie zmieściła
+    int chars_size = sizeof(chars) / sizeof(chars[0]);
+    
+    int ints[] = {1000000000, 1000000000, 1000000000}; // Suma to 3 mld, przekracza zakres 32-bitowego int
+    int ints_size = sizeof(ints) / sizeof(ints[0]);
+
+    std::cout << "Suma char: " << sum(chars, chars + chars_size) << std::endl;
+    std::cout << "Suma int:  " << sum(ints, ints + ints_size) << std::endl;
+
+    return 0;
+}
