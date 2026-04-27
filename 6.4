@@ -1,0 +1,130 @@
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
+
+
+struct No_checking_policy {
+    void check_push(size_t, size_t) {}
+    void check_pop(size_t) {}
+    void check_top(size_t) {}
+};
+
+// Alokator statyczny, ale ma dane
+template<typename T, size_t N = 0> 
+class Static_table_allocator {
+protected: 
+    T _rep[N]; 
+
+public:
+   
+    void init() {}
+    void expand_if_needed(size_t) {}
+    void shrink_if_needed(size_t) {}
+    void dealocate() {}
+    
+    static size_t size() { return N; }
+};
+
+
+// alokator dynamiczny, ale ma dane
+
+template<typename T, size_t N = 0> 
+class Dynamic_table_allocator {
+protected:
+    T* _rep; 
+    size_t capacity;
+
+public:
+    void init() {
+        capacity = (N > 0) ? N : 10;
+        _rep = new T[capacity];
+    }
+
+    void expand_if_needed(size_t top) {
+        if (top >= capacity) {
+            size_t new_capacity = capacity * 2;
+            T* new_data = new T[new_capacity];
+            
+            for (size_t i = 0; i < top; ++i) {
+                new_data[i] = _rep[i];
+            }
+            
+            delete[] _rep;
+            _rep = new_data;
+            capacity = new_capacity;
+            
+            cout << "  [Alokator] Powiekszono stertę do: " << new_capacity << " elementow\n";
+        }
+    }
+
+    void shrink_if_needed(size_t top) {}
+
+    void dealocate() {
+        delete[] _rep;
+        _rep = nullptr;
+    }
+
+    static size_t size() { return static_cast<size_t>(-1); } 
+};
+
+
+template<
+    typename T = int, 
+    size_t N = 100,
+    typename Checking_policy = No_checking_policy,
+    template<typename U, size_t M> class Allocator_policy = Static_table_allocator
+>
+class Stack : private Checking_policy, private Allocator_policy<T, N> {
+private:
+    size_t _top;
+
+public:
+    Stack() : _top(0) {
+        // Alokator inicjuje swoje dane
+        this->init();
+    }
+
+    ~Stack() {
+        this->dealocate();
+    }
+
+    void push(const T& val) {
+        this->expand_if_needed(_top);
+        
+        this->check_push(_top, Allocator_policy<T, N>::size());
+        
+        this->_rep[_top] = val;
+        ++_top;
+    }
+
+    void pop() {
+        this->check_pop(_top);
+        --_top;
+        this->shrink_if_needed(_top);
+    }
+
+    T& top() {
+        this->check_top(_top);
+        return this->_rep[_top - 1]; // Ponownie korzystamy z odziedziczonej tablicy
+    }
+};
+
+
+int main() {
+    cout << "Test:\n";
+    
+   
+    Stack<int, 2, No_checking_policy, Dynamic_table_allocator> ostateczny_stos;
+    
+    ostateczny_stos.push(1);
+    ostateczny_stos.push(2);
+    ostateczny_stos.push(3); 
+    ostateczny_stos.push(4);
+    ostateczny_stos.push(5); 
+    
+    cout << "Na szczycie znajduje sie element: " << ostateczny_stos.top() << endl;
+
+
+    return 0;
+}
