@@ -1,0 +1,101 @@
+#include <iostream>
+#include <cstdlib> // wymagane dla std::abort()
+
+using namespace std;
+
+
+struct No_checking_policy {
+    void check_push(size_t top, size_t max_size) {}
+    void check_pop(size_t top) {}
+    void check_top(size_t top) {}
+};
+
+
+// Rzuca komunikat i zabija proces w razie błędu.
+struct Abort_on_error_policy {
+    void check_push(size_t top, size_t max_size) {
+        if (top >= max_size) {
+            cerr << "[BLAD KRYTYCZNY] Przepelnienie stosu (Stack overflow)! Max: " << max_size << endl;
+            abort(); // Natychmiastowe zakończenie programu
+        }
+    }
+
+    void check_pop(size_t top) {
+        if (top == 0) {
+            cerr << "[BLAD KRYTYCZNY] Stos jest pusty, nie mozna wykonac pop()!" << endl;
+            abort();
+        }
+    }
+
+    void check_top(size_t top) {
+        if (top == 0) {
+            cerr << "[BLAD KRYTYCZNY] Stos jest pusty, brak elementu top()!" << endl;
+            abort();
+        }
+    }
+};
+
+
+// Szablon stosu, posiada 3 parametry
+
+template<typename T = int, size_t N = 100, typename Checking_policy = No_checking_policy>
+class Stack : private Checking_policy {
+private:
+    T _rep[N];    // Fizyczna tablica na dane
+    size_t _top;  // Wskaźnik na pierwszy wolny indeks
+
+public:
+    // Konstruktor
+    Stack() : _top(0) {}
+
+    void push(const T& val) {
+        // Delegujemy sprawdzenie błędów
+        this->check_push(_top, N);
+        
+        _rep[_top] = val;
+        ++_top;
+    }
+
+    void pop() {
+        this->check_pop(_top);
+        --_top;
+    }
+
+    T& top() {
+        this->check_top(_top);
+        return _rep[_top - 1]; // Zwracamy ostatni dodany element
+    }
+    
+    // Dodatkowa metoda do podglądu rozmiaru
+    size_t size() const {
+        return _top;
+    }
+};
+
+
+
+int main() {
+    cout << "--- TEST 1: Stos Bezpieczny (Abort_on_error_policy) ---\n";
+    // Tworzymy stos na max 2 elementy
+    Stack<int, 2, Abort_on_error_policy> bezpieczny_stos;
+    
+    bezpieczny_stos.push(10);
+    bezpieczny_stos.push(20);
+    cout << "Na gorze jest: " << bezpieczny_stos.top() << endl; 
+    
+
+
+
+    cout << "\n--- TEST 2: Stos Szybki (No_checking_policy) ---\n";
+    // Korzystamy z parametrów domyślnych
+    Stack<int, 2> szybki_stos; 
+    
+    szybki_stos.push(100);
+    szybki_stos.push(200);
+    
+
+    szybki_stos.push(300); 
+    cout << "Przepelnilem stos, ale program dziala dalej\n";
+
+    return 0;
+}
