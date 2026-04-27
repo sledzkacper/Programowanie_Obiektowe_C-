@@ -55,7 +55,7 @@ struct Dynamic_table_allocator {
             rep.data = new_data;
             rep.capacity = new_capacity;
             
-            cout << "  [Alokator] Powiekszono pamiec do: " << new_capacity << " elementow!\n";
+            cout << "  [Alokator] Powiekszono pamiec do: " << new_capacity << " elementow\n";
         }
     }
 
@@ -107,7 +107,7 @@ public:
         // Sprawdź ewentualne błędy (dla dynamicznego max to nieskończoność)
         this->check_push(_top, Allocator_policy<T, N>::size());
         
-        // 3. Dodaj wartość
+        // Dodaj wartość
         _rep[_top] = val;
         ++_top;
     }
@@ -131,24 +131,24 @@ int main() {
     Stack<int, 2> stos_statyczny; 
     stos_statyczny.push(10);
     stos_statyczny.push(20);
-    cout << "Statyczny dodal 2 elementy. Proba dodania 3. zniszczylaby pamiec!\n\n";
+    cout << "Statyczny dodal 2 elementy. Proba dodania 3. zniszczylaby pamiec\n\n";
     
 
     cout << "--- TEST 2: Stos Dynamiczny (Początkowy rozmiar: 2 elementy) ---\n";
     // Podmieniamy alokator na dynamiczny
     Stack<int, 2, No_checking_policy, Dynamic_table_allocator> stos_dynamiczny;
     
-    cout << "Dodaje element 1 (wartosc 100)...\n";
+    cout << "Dodaje element 1 \n";
     stos_dynamiczny.push(100);
     
-    cout << "Dodaje element 2 (wartosc 200)...\n";
+    cout << "Dodaje element 2 \n";
     stos_dynamiczny.push(200);
     
-    cout << "Dodaje element 3 (wartosc 300 - tu zabraknie miejsca!)...\n";
+    cout << "Dodaje element 3 \n";
     // UWAGA: Nastąpi automatyczne rozszerzenie pamięci!
     stos_dynamiczny.push(300); 
     
-    cout << "Dodaje element 4 (wartosc 400)...\n";
+    cout << "Dodaje element 4 \n";
     stos_dynamiczny.push(400);
 
     cout << "Top element dynamicznego to: " << stos_dynamiczny.top() << endl;
