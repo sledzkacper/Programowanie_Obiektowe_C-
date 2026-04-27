@@ -1,0 +1,157 @@
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
+
+
+struct No_checking_policy {
+    void check_push(size_t, size_t) {}
+    void check_pop(size_t) {}
+    void check_top(size_t) {}
+};
+
+// alokator statyczny
+template<typename T, size_t N = 0> 
+struct Static_table_allocator {
+    typedef T rep_type[N]; // Zwykła tablica
+    
+    void init(rep_type &, size_t) {}
+    void expand_if_needed(rep_type &, size_t) {}
+    void shrink_if_needed(rep_type &, size_t) {}
+    void dealocate(rep_type &) {}
+    
+    static size_t size() { return N; }
+};
+
+
+// alokator dynamiczny
+template<typename T, size_t N = 0> 
+struct Dynamic_table_allocator {
+    struct DynamicArray {
+        T* data;
+        size_t capacity;
+        T& operator[](size_t i) { return data[i]; }
+    };
+
+    typedef DynamicArray rep_type;
+
+    void init(rep_type &rep, size_t) {
+        rep.capacity = (N > 0) ? N : 10; // Startowa pojemność z parametru N
+        rep.data = new T[rep.capacity];
+    }
+
+    void expand_if_needed(rep_type &rep, size_t top) {
+        // Jeśli doszliśmy do ściany, alokator x2 zwiększa tablicę
+        if (top >= rep.capacity) {
+            size_t new_capacity = rep.capacity * 2;
+            T* new_data = new T[new_capacity];
+            
+            // Przepisujemy stare dane
+            for (size_t i = 0; i < top; ++i) {
+                new_data[i] = rep.data[i];
+            }
+            
+            delete[] rep.data; // Zwalniamy starą, małą tablicę
+            rep.data = new_data;
+            rep.capacity = new_capacity;
+            
+            cout << "  [Alokator] Powiekszono pamiec do: " << new_capacity << " elementow!\n";
+        }
+    }
+
+    void shrink_if_needed(rep_type &rep, size_t top) {
+        
+    }
+
+    void dealocate(rep_type &rep) {
+        delete[] rep.data;
+        rep.data = nullptr;
+    }
+
+    // Dla tablicy dynamicznej maksymalny rozmiar limitowany jest tylko pamięcią RAM
+    // Zwracamy maksymalną możliwą wartość size_t (nieskończoność dla naszego stosu)
+    static size_t size() { return static_cast<size_t>(-1); } 
+};
+
+
+template<
+    typename T = int, 
+    size_t N = 100,
+    typename Checking_policy = No_checking_policy,
+    // Szablonowy parametr szablonu: spodziewamy się, że Allocator_policy będzie miało formę Szablon<U, M>
+    template<typename U, size_t M> class Allocator_policy = Static_table_allocator
+>
+// Dziedziczymy prywatnie 
+class Stack : private Checking_policy, private Allocator_policy<T, N> {
+private:
+    // Zmuszamy kompilator, by sprawdził, czy używamy tablicy statycznej czy naszego 'DynamicArray'
+    typedef typename Allocator_policy<T, N>::rep_type ContainerType;
+    
+    ContainerType _rep;
+    size_t _top;
+
+public:
+    Stack() : _top(0) {
+        // init z alokatora 
+        this->init(_rep, N);
+    }
+
+    ~Stack() {
+        this->dealocate(_rep);
+    }
+
+    void push(const T& val) {
+        // Sprawdź, czy musimy i czy potrafimy zwiększyć pamięć
+        this->expand_if_needed(_rep, _top);
+        
+        // Sprawdź ewentualne błędy (dla dynamicznego max to nieskończoność)
+        this->check_push(_top, Allocator_policy<T, N>::size());
+        
+        // 3. Dodaj wartość
+        _rep[_top] = val;
+        ++_top;
+    }
+
+    void pop() {
+        this->check_pop(_top);
+        --_top;
+        this->shrink_if_needed(_rep, _top);
+    }
+
+    T& top() {
+        this->check_top(_top);
+        return _rep[_top - 1];
+    }
+};
+
+// testy
+int main() {
+    cout << "--- TEST 1: Stos Statyczny (Limit: 2 elementy) ---\n";
+    // Domyślnie używa Static_table_allocator
+    Stack<int, 2> stos_statyczny; 
+    stos_statyczny.push(10);
+    stos_statyczny.push(20);
+    cout << "Statyczny dodal 2 elementy. Proba dodania 3. zniszczylaby pamiec!\n\n";
+    
+
+    cout << "--- TEST 2: Stos Dynamiczny (Początkowy rozmiar: 2 elementy) ---\n";
+    // Podmieniamy alokator na dynamiczny
+    Stack<int, 2, No_checking_policy, Dynamic_table_allocator> stos_dynamiczny;
+    
+    cout << "Dodaje element 1 (wartosc 100)...\n";
+    stos_dynamiczny.push(100);
+    
+    cout << "Dodaje element 2 (wartosc 200)...\n";
+    stos_dynamiczny.push(200);
+    
+    cout << "Dodaje element 3 (wartosc 300 - tu zabraknie miejsca!)...\n";
+    // UWAGA: Nastąpi automatyczne rozszerzenie pamięci!
+    stos_dynamiczny.push(300); 
+    
+    cout << "Dodaje element 4 (wartosc 400)...\n";
+    stos_dynamiczny.push(400);
+
+    cout << "Top element dynamicznego to: " << stos_dynamiczny.top() << endl;
+
+    return 0;
+}
