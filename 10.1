@@ -1,0 +1,35 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <execution>
+
+using namespace std;
+
+int main() {
+    vector<int> dane = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    vector<int> wyniki(10);
+
+    cout << "--- 1. Strategia SEQ (std::execution::seq) ---\n";
+    
+    for_each(execution::seq, dane.begin(), dane.end(), [](int n) {
+        cout << n << " ";
+    });
+    cout << "\n\n";
+
+    cout << "2. Parallel policy\n";
+    
+    transform(execution::par, dane.begin(), dane.end(), wyniki.begin(), [](int n) {
+        return n * 2; 
+    });
+    cout << "Punkt 2 działa poprawnie.\n Używany do obliczeń w których kolejność nie ma znaczenia\n\n";
+
+    cout <<  "3. PAR_UNSEQ\n";
+    
+    transform(execution::par_unseq, dane.begin(), dane.end(), wyniki.begin(), [](int n) {
+        return n * n; 
+    });
+    cout << "Punkt 3 działa poprawnie.\n Używamy do maksymalnego przyspieszenia obliczeń.";
+
+    return 0;
+}
+
