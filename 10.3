@@ -1,0 +1,55 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <execution>
+#include <cmath>
+#include <random>
+
+using namespace std;
+
+int main() {
+    const int ROZMIAR = 5'000'000;
+    vector<double> dane(ROZMIAR);
+
+    // 1. generate - Równoległe generowanie danych
+    // Rdzenie niezależnie wypełniają wektor losowymi liczbami
+    cout << "1. Generowanie danych (std::generate)\n";
+    generate(execution::par, dane.begin(), dane.end(), []() {
+        return sin(rand()) * 100.0; 
+    });
+
+    // 2. replace_if - Równoległe czyszczenie danych
+    // Zamieniamy wszystkie liczby ujemne na 0 (np. usuwanie szumu)
+    cout << "2. Czyszczenie danych (std::replace_if)\n";
+    replace_if(execution::par, dane.begin(), dane.end(), [](double wartosc) {
+        return wartosc < 0.0; 
+    }, 0.0); 
+
+    // 3. transform - Równoległe ciężkie obliczenia matematyczne
+    // Każdy rdzeń bierze liczbę i liczy z niej skomplikowany pierwiastek
+    cout << "3. Transformacja matematyczna (std::transform)\n";
+    transform(execution::par, dane.begin(), dane.end(), dane.begin(), [](double wartosc) {
+        return sqrt(wartosc + 10.0) * 2.5; 
+    });
+
+    // 4. sort - Równoległe sortowanie dużej tablicy
+    // Rozbija wektor na podtablice, sortuje na wielu rdzeniach i scala
+    cout << "4. Sortowanie elementow (std::sort)\n";
+    sort(execution::par, dane.begin(), dane.end());
+
+    // 5. any_of - Równoległe poszukiwanie anomalii
+    // Szukamy, czy w posortowanych danych ostała się jakaś ujemna wartość
+    cout << "5. Skanowanie w poszukiwaniu bledu (std::any_of)\n";
+    bool czy_jest_blad = any_of(execution::par, dane.begin(), dane.end(), [](double wartosc) {
+        return wartosc < 0;
+    });
+    
+    if (czy_jest_blad) {
+        cout << "Znaleziono anomalię\n";
+    } else {
+        cout << "Dane czyste. Brak anomalii.\n";
+    }
+
+    cout << "\nZAKONCZONO WSZYSTKIE ZADANIA\n";
+    return 0;
+}
