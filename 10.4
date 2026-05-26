@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <numeric>  
+#include <algorithm> 
+#include <execution>
+
+using namespace std;
+
+int main() {
+
+    // 1. reduce - łączy wektor stringów za pomocą lambdy []
+    vector<string> slowa = {"To", "jest", "ostatnie", "zadanie", "na", "dzisiaj"};
+    
+    string polaczone_slowa = reduce(
+        execution::seq, // seq, żeby zachować kolejność słów
+        slowa.begin(), 
+        slowa.end(), 
+        string("Start"), 
+        [](auto fir, auto sec){ return fir + ":" + sec; } // Lambda z polecenia
+    );
+    
+    cout << "1. Wynik std::reduce: \n   " << polaczone_slowa << "\n\n";
+
+    // 2. transform - np. liczymy łączną długość wszystkich słów w wektorze.
+    int laczna_dlugosc = transform_reduce(
+        execution::par, 
+        slowa.begin(), 
+        slowa.end(), 
+        0, // Wartość początkowa sumy
+        plus<>(), // Jak łączymy wyniki (dodawanie)
+        [](const string& s) { return s.length(); } // Jak transformujemy (zamieniamy słowo na jego długość)
+    );
+    
+    cout << "2. Wynik std::transform_reduce: \n   Laczna liczba znakow to " << laczna_dlugosc << "\n\n";
+
+    // 3. std::for_each_n - wykonuje operację tylko na N pierwszych elementach
+    vector<int> liczby = {10, 20, 30, 40, 50, 60};
+    
+    cout << "3. Wynik std::for_each_n (tylko 3 pierwsze elementy):\n   ";
+    for_each_n(execution::par, liczby.begin(), 3, [](int& n) {
+        cout << n << " ";
+    });
+    cout << "\n\n";
+
+    // 4. std::inclusive_scan - działa jak reduce, ale zapisuje sumę bieżącą
+    vector<int> sumy_czesciowe(liczby.size());
+    
+    inclusive_scan(
+        execution::par, 
+        liczby.begin(), 
+        liczby.end(), 
+        sumy_czesciowe.begin()
+    );
+    
+    cout << "4. Wynik std::inclusive_scan (sumy narastajace):\n   ";
+    for(int s : sumy_czesciowe) {
+        cout << s << endl; 
+    }
+
+    return 0;
+}
