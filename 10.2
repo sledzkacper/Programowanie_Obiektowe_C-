@@ -1,0 +1,55 @@
+#include <iostream>
+#include <vector>
+#include <numeric> 
+#include <algorithm>
+#include <execution>
+#include <mutex>
+#include <chrono> // Do mierzenia czasu
+
+using namespace std;
+using namespace std::chrono;
+
+int main() {
+    cout << "Generowanie danych (10 mln elementów xd)" << endl;
+    vector<int> vec(10'000'000);   
+    iota(vec.begin(), vec.end(), 0); 
+    
+    vector<int> output;
+    mutex mtx; 
+
+    cout << "Start obliczen parallel z Mutexem" << endl;
+    auto start = high_resolution_clock::now();
+
+    // parallel
+    for_each(execution::par, vec.begin(), vec.end(), [&output, &mtx](int& elem) {       
+        if (elem % 2 == 0) {           
+            lock_guard<mutex> lock(mtx); 
+            output.push_back(elem);
+        }
+    });
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(stop - start);
+    
+    cout << "Czas wykonania PAR: " << duration.count() << " ms\n";
+    cout << "Zabrano elementow: " << output.size() << "\n\n";
+
+    // porównanie z seq
+    vector<int> output_seq;
+    
+    cout << "Start obliczen SEQ (jeden wątek, bez mutexa)" << endl;
+    start = high_resolution_clock::now();
+
+    for_each(execution::seq, vec.begin(), vec.end(), [&output_seq](int& elem) {       
+        if (elem % 2 == 0) {           
+            output_seq.push_back(elem);
+        }
+    });
+
+    stop = high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(stop - start);
+    
+    cout << "Czas wykonania SEQ: " << duration.count() << " ms\n";
+
+    return 0;
+}
