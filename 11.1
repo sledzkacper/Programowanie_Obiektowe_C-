@@ -1,0 +1,52 @@
+#include <iostream>
+#include <concepts>
+#include <string>
+
+using namespace std;
+
+// Sposób 1: Klasyczny, z użyciem requires
+template<typename T>
+T gcd_1(T a, T b) requires std::integral<T> {
+    if(b == 0) return a;
+    return gcd_1(b, a % b);
+}
+
+// Sposób 2: Skrócony parametr szablonu
+template<std::integral T>
+T gcd_2(T a, T b) {
+    if(b == 0) return a;
+    return gcd_2(b, a % b);
+}
+
+// Sposób 3: z użyciem auto
+    if(b == 0) return a;
+    return gcd_3(b, a % b);
+}
+
+int main() {
+    cout << "--- TESTOWANIE KONCEPTU std::integral ---\n\n";
+
+    // 1. int
+    int wynik1 = gcd_1(100, 10);
+    cout << "NWD dla (100, 10) wynosi: " << wynik1 << "\n";
+
+    // 2. long
+    long wynik2 = gcd_2(250L, 25L);
+    cout << "NWD dla longow wynosi: " << wynik2 << "\n";
+
+    // 'a' jest intem (100), 'b' jest longiem (50L)
+    auto wynik3 = gcd_3(100, 50L);
+    cout << "NWD dla int i long wynosi: " << wynik3 << "\n\n";
+
+    // Ale poniższe próby zostaną odrzucone:
+
+    // 1) double
+    // double ulamki = gcd_1(10.5, 2.5); 
+    // Komunikat kompilatora: "Constraints not satisfied... 'double' is not an integral"
+
+    // 2) string
+    // string teksty = gcd_2(string("abzzz"), string("cdef")); 
+    // Komunikat kompilatora: "Constraints not satisfied... 'std::string' is not an integral"
+
+    return 0;
+}
