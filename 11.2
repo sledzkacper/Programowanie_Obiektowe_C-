@@ -1,0 +1,41 @@
+#include <iostream>
+#include <compare>
+#include <string>
+
+using namespace std;
+
+struct ZepsutyTyp {};
+
+struct DobryTyp {
+    int wartosc;
+    auto operator<=>(const DobryTyp&) const = default;
+};
+
+
+int main() {
+    // wykorzystanie w czasie kompilacji
+    static_assert(three_way_comparable<int>);
+    static_assert(three_way_comparable<string>);
+    static_assert(three_way_comparable<DobryTyp>);
+    
+
+    if constexpr(three_way_comparable<double>) {
+        cout << "[Czas kompilacji] Tak, double wspiera operator statek kosmiczny!\n";
+    }
+
+    // Wykorzystanie w czasie działania programu
+    cout << "\n--- SPRAWDZANIE W TRAKCIE DZIALANIA PROGRAMU ---\n";
+    cout << boolalpha; 
+
+    bool czy_int_wspiera = three_way_comparable<int>;
+    cout << "Czy int wspiera <=>? " << czy_int_wspiera << "\n";
+
+    cout << "Czy nasza biedna klasa 'ZepsutyTyp' wspiera <=>? ";
+    if (three_way_comparable<ZepsutyTyp>) {
+        cout << "Tak.\n";
+    } else {
+        cout << "Nie, jest na to zbyt prymitywna.\n";
+    }
+
+    return 0;
+}
