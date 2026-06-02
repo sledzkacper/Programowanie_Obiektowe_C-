@@ -24,7 +24,7 @@ int main() {
     }
 
     // Wykorzystanie w czasie działania programu
-    cout << "\n--- SPRAWDZANIE W TRAKCIE DZIALANIA PROGRAMU ---\n";
+    cout << "\nSprawdzanie w trakcie działania programu: \n";
     cout << boolalpha; 
 
     bool czy_int_wspiera = three_way_comparable<int>;
@@ -32,9 +32,9 @@ int main() {
 
     cout << "Czy nasza biedna klasa 'ZepsutyTyp' wspiera <=>? ";
     if (three_way_comparable<ZepsutyTyp>) {
-        cout << "Tak.\n";
+        cout << "Tak\n";
     } else {
-        cout << "Nie, jest na to zbyt prymitywna.\n";
+        cout << "Nie\n";
     }
 
     return 0;
